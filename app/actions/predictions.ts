@@ -1,10 +1,18 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import prisma from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function createPrediction(formData: FormData) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return { success: false, error: "Vous devez être connecté" };
+    }
+
     const name = formData.get("name");
 
     if (!name || typeof name !== "string") {
@@ -19,7 +27,10 @@ export async function createPrediction(formData: FormData) {
     }
 
     const prediction = await prisma.prediction.create({
-      data: { name },
+      data: {
+        name,
+        userId: session.user.id,
+      },
     });
 
     revalidatePath("/");
@@ -34,8 +45,19 @@ export async function createPrediction(formData: FormData) {
 
 export async function getPredictions() {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return [];
+    }
+
     return await prisma.prediction.findMany({
-      orderBy: { createdAt: "desc" },
+      where: {
+        userId: session.user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
   } catch {
     return [];

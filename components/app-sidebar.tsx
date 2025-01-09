@@ -1,9 +1,8 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { LogIn, Palette, Plus, ChevronRight } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { Plus, ChevronRight } from "lucide-react";
+import { UserNav } from "@/components/user-nav";
 import { ModeToggle } from "@/components/mode-toggle";
 import {
   Collapsible,
@@ -26,6 +25,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { getPredictions } from "@/app/actions/predictions";
+import { TwitchCoin } from "@/components/icons/twitch-coin";
 
 export async function AppSidebar() {
   const predictions = await getPredictions();
@@ -64,7 +64,7 @@ export async function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Prédictions">
                   <Link href="/prediction" className="flex-1">
-                    <Palette className="size-4" />
+                    <TwitchCoin />
                     <span>Prédictions</span>
                   </Link>
                 </SidebarMenuButton>
@@ -99,7 +99,7 @@ export async function AppSidebar() {
                     <SidebarMenuSubButton asChild>
                       <Link href="/prediction/new">
                         <Plus className="size-4" />
-                        <span>Nouveau overlay</span>
+                        <span>Nouvelle Prédiction</span>
                       </Link>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -111,14 +111,7 @@ export async function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="flex items-center gap-2 p-2">
-        <Button asChild className="flex w-full items-center gap-2">
-          <Link href="/login">
-            <LogIn className="size-4" />
-            <span className="group-data-[collapsible=icon]:hidden">
-              Connexion
-            </span>
-          </Link>
-        </Button>
+        <UserNav />
         <ModeToggle />
       </SidebarFooter>
     </Sidebar>
