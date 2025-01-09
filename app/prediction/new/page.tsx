@@ -33,7 +33,9 @@ export default function NewPredictionPage() {
           title: "Prédiction créée",
           description: "Votre prédiction a été créée avec succès",
         });
-        router.push("/prediction");
+        if (result.data) {
+          router.push(`/prediction/${result.data.id}`);
+        }
       } else {
         toast({
           variant: "destructive",
@@ -81,8 +83,6 @@ export default function NewPredictionPage() {
                     name="name"
                     placeholder="Nom de la prédiction"
                     disabled={isPending}
-                    required
-                    minLength={3}
                   />
                 </div>
                 <Button type="submit" disabled={isPending}>
