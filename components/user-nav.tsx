@@ -1,7 +1,5 @@
 "use client";
 
-import { signIn, signOut, useSession } from "next-auth/react";
-import { LogOut, User, LogIn } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,24 +9,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { LogOut, User, LogIn } from "lucide-react";
 
 export function UserNav() {
   const { data: session } = useSession();
 
-  if (!session?.user) {
+  if (!session) {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton
-            onClick={() => signIn("discord", { callbackUrl: "/prediction" })}
-          >
-            <LogIn className="size-4" />
-            <span>Connexion</span>
+          <SidebarMenuButton asChild>
+            <Button
+              onClick={() => signIn("discord", { callbackUrl: "/prediction" })}
+              className="w-full justify-start gap-2 bg-primary hover:bg-secondary/90 dark:bg-primary dark:hover:bg-secondary/90"
+            >
+              <LogIn className="size-4" />
+              <span className="font-medium">Connexion avec Discord</span>
+            </Button>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -40,9 +44,9 @@ export function UserNav() {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton className="relative h-8 w-full">
-              <div className="flex w-full items-center gap-2">
-                <Avatar className="size-6">
+            <SidebarMenuButton className="relative h-10 w-full hover:bg-accent transition-colors">
+              <div className="flex w-full items-center gap-3">
+                <Avatar className="size-7 border-2 border-primary">
                   <AvatarImage
                     src={session.user.image!}
                     alt={session.user.name!}
@@ -52,7 +56,12 @@ export function UserNav() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 overflow-hidden text-left">
-                  <p className="truncate text-sm">{session.user.name}</p>
+                  <p className="truncate text-sm font-medium">
+                    {session.user.name}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {session.user.email}
+                  </p>
                 </div>
               </div>
             </SidebarMenuButton>
@@ -70,10 +79,10 @@ export function UserNav() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
+              className="text-destructive focus:text-destructive gap-2 font-medium"
               onClick={() => signOut()}
             >
-              <LogOut className="mr-2 size-4" />
+              <LogOut className="size-4" />
               <span>Se déconnecter</span>
             </DropdownMenuItem>
           </DropdownMenuContent>

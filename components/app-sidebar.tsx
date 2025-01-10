@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/sidebar";
 import { getPredictions } from "@/app/actions/predictions";
 import { TwitchCoin } from "@/components/icons/twitch-coin";
+import { Separator } from "@/components/ui/separator";
 
 export async function AppSidebar() {
   const predictions = await getPredictions();
@@ -55,6 +56,8 @@ export async function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
+      <Separator />
 
       <SidebarContent>
         <SidebarGroup>
