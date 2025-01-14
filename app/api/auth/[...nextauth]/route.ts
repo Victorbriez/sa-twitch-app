@@ -12,13 +12,24 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    session: async ({ session, user }) => {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+          role: user.role,
+        },
+      };
+    },
+  },
+  events: {
+    createUser: async (user) => {
+      await prisma.user.update({
+        where: { id: user.user.id },
+        data: { role: "member" },
+      });
+    },
   },
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
