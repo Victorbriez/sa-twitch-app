@@ -1,13 +1,12 @@
 "use client";
 
-import * as React from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Prediction } from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { useToast } from "@/hooks/use-toast";
-import { createPrediction } from "@/app/actions/predictions";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -16,13 +15,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,6 +27,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { editPrediction } from "@/app/actions/predictions";
 
 const formSchema = z.object({
   name: z
@@ -43,59 +42,61 @@ const formSchema = z.object({
   description: z.string().optional(),
 });
 
-interface NewPredictionDialogProps {
-  children: React.ReactNode;
+interface EditPredictionDialogProps {
+  prediction: Prediction;
+  onClose: () => void;
 }
 
-export function NewPredictionDialog({ children }: NewPredictionDialogProps) {
+export function EditPredictionDialog({
+  prediction,
+  onClose,
+}: EditPredictionDialogProps) {
+  const [isOpen, setIsOpen] = useState(true);
   const router = useRouter();
   const { toast } = useToast();
-  const [open, setOpen] = React.useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: prediction.name,
+      description: prediction.description || "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const formData = new FormData();
-    formData.append("name", values.name);
-    if (values.description) {
-      formData.append("description", values.description);
-    }
-
-    const result = await createPrediction(formData);
-
+    const result = await editPrediction(prediction.id.toString(), values);
     if (result.success) {
       toast({
-        title: "Prédiction créée",
-        description: "Votre prédiction a été créée avec succès",
+        title: "Prédiction modifiée",
+        description: "La prédiction a été modifiée avec succès.",
       });
-      if (result.data) {
-        router.push(`/prediction/${result.data.name}`);
-      }
-      setOpen(false);
-      form.reset();
+      router.refresh();
+      setIsOpen(false);
+      onClose();
     } else {
       toast({
+        title: "Erreur",
+        description:
+          result.error || "Une erreur est survenue lors de la modification.",
         variant: "destructive",
-        title: "Erreur lors de la création",
-        description: result.error,
       });
     }
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+    <AlertDialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) onClose();
+      }}
+    >
       <AlertDialogContent className="sm:max-w-[425px]">
         <AlertDialogHeader>
-          <AlertDialogTitle>Nouvelle Prédiction</AlertDialogTitle>
+          <AlertDialogTitle>Modifier la prédiction</AlertDialogTitle>
           <AlertDialogDescription>
-            Créez une nouvelle prédiction pour votre stream.
+            Modifiez les détails de votre prédiction ici. Cliquez sur
+            sauvegarder quand vous avez terminé.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <Form {...form}>
@@ -109,9 +110,6 @@ export function NewPredictionDialog({ children }: NewPredictionDialogProps) {
                   <FormControl>
                     <Input placeholder="Nom de la prédiction" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    Choisissez un nom unique pour votre prédiction.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -129,18 +127,13 @@ export function NewPredictionDialog({ children }: NewPredictionDialogProps) {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Optionnel. Ajoutez une description à votre prédiction.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <AlertDialogFooter>
               <AlertDialogCancel>Annuler</AlertDialogCancel>
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Création..." : "Créer"}
-              </Button>
+              <Button type="submit">Sauvegarder les changements</Button>
             </AlertDialogFooter>
           </form>
         </Form>

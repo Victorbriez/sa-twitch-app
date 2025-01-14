@@ -26,7 +26,11 @@ import {
 } from "lucide-react";
 
 export function UserNav() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return <span>Chargement...</span>;
+  }
 
   if (!session) {
     return (

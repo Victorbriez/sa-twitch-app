@@ -20,10 +20,6 @@ export async function createPrediction(formData: FormData) {
       return { success: false, error: "Le nom est requis" };
     }
 
-    if (typeof description !== "string") {
-      return { success: false, error: "La description est invalide" };
-    }
-
     if (name.length < 3) {
       return {
         success: false,
@@ -40,10 +36,18 @@ export async function createPrediction(formData: FormData) {
       };
     }
 
+    let descriptionToSave = null;
+    if (description !== null && description !== undefined) {
+      if (typeof description !== "string") {
+        return { success: false, error: "La description est invalide" };
+      }
+      descriptionToSave = description;
+    }
+
     const prediction = await prisma.prediction.create({
       data: {
         name,
-        description,
+        description: descriptionToSave,
         userId: session.user.id,
       },
     });
@@ -76,6 +80,50 @@ export async function getPredictions() {
     });
   } catch {
     return [];
+  }
+}
+
+export async function editPrediction(
+  id: string,
+  data: { name: string; description?: string }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return { success: false, error: "Vous devez être connecté" };
+    }
+
+    const prediction = await prisma.prediction.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!prediction) {
+      return { success: false, error: "Prédiction introuvable" };
+    }
+
+    if (prediction.userId !== session.user.id) {
+      return {
+        success: false,
+        error: "Vous n'êtes pas autorisé à modifier cette prédiction",
+      };
+    }
+
+    const updatedPrediction = await prisma.prediction.update({
+      where: { id: parseInt(id) },
+      data: {
+        name: data.name,
+        description: data.description,
+      },
+    });
+
+    revalidatePath("/");
+    return { success: true, data: updatedPrediction };
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("Unique constraint")) {
+      return { success: false, error: "Ce nom est déjà utilisé" };
+    }
+    return { success: false, error: "Une erreur est survenue" };
   }
 }
 
