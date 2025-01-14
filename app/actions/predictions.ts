@@ -14,9 +14,14 @@ export async function createPrediction(formData: FormData) {
     }
 
     const name = formData.get("name");
+    const description = formData.get("description");
 
     if (!name || typeof name !== "string") {
       return { success: false, error: "Le nom est requis" };
+    }
+
+    if (typeof description !== "string") {
+      return { success: false, error: "La description est invalide" };
     }
 
     if (name.length < 3) {
@@ -38,6 +43,7 @@ export async function createPrediction(formData: FormData) {
     const prediction = await prisma.prediction.create({
       data: {
         name,
+        description,
         userId: session.user.id,
       },
     });
@@ -65,10 +71,44 @@ export async function getPredictions() {
         userId: session.user.id,
       },
       orderBy: {
-        createdAt: "desc",
+        updatedAt: "desc",
       },
     });
   } catch {
     return [];
+  }
+}
+
+export async function deletePrediction(id: string) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return { success: false, error: "Vous devez être connecté" };
+    }
+
+    const prediction = await prisma.prediction.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!prediction) {
+      return { success: false, error: "Prédiction introuvable" };
+    }
+
+    if (prediction.userId !== session.user.id) {
+      return {
+        success: false,
+        error: "Vous n'êtes pas autorisé à supprimer cette prédiction",
+      };
+    }
+
+    await prisma.prediction.delete({
+      where: { id: parseInt(id) },
+    });
+
+    revalidatePath("/");
+    return { success: true };
+  } catch {
+    return { success: false, error: "Une erreur est survenue" };
   }
 }

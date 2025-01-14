@@ -35,21 +35,23 @@ export default async function PredictionPage() {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <NewPredictionDialog>
-          <Button size="sm">
-            <Plus className="mr-2 size-4" />
-            Nouvelle prédiction
-          </Button>
-        </NewPredictionDialog>
       </header>
 
       <main className="flex-1 overflow-auto p-6">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold">Prédictions</h1>
-            <p className="text-muted-foreground">
-              Gérez vos overlays de prédictions Twitch
-            </p>
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Prédictions</h1>
+              <p className="text-muted-foreground">
+                Gérez vos overlays de prédictions Twitch
+              </p>
+            </div>
+            <NewPredictionDialog>
+              <Button size="sm">
+                <Plus className="mr-2 size-4" />
+                Nouvelle prédiction
+              </Button>
+            </NewPredictionDialog>
           </div>
           <PredictionsList predictions={predictions} />
         </div>

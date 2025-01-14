@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 interface NewPredictionDialogProps {
   children: React.ReactNode;
@@ -72,6 +73,18 @@ export function NewPredictionDialog({ children }: NewPredictionDialogProps) {
               placeholder="Nom de la prédiction"
               disabled={isPending}
             />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              placeholder="Description de la prédiction"
+              name="description"
+              id="description"
+              disabled={isPending}
+            />
+            <p className="text-sm text-muted-foreground">
+              Optionnel. Ajoutez une description à votre prédiction.
+            </p>
           </div>
           <AlertDialogFooter>
             <AlertDialogCancel type="button">Annuler</AlertDialogCancel>
