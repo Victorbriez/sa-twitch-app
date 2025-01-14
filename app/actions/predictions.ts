@@ -26,6 +26,15 @@ export async function createPrediction(formData: FormData) {
       };
     }
 
+    const isValidName = /^[a-zA-Z0-9_-]+$/.test(name);
+    if (!isValidName) {
+      return {
+        success: false,
+        error:
+          "Le nom ne peut contenir que des caractères alphanumériques, des tirets (-) ou des underscores (_).",
+      };
+    }
+
     const prediction = await prisma.prediction.create({
       data: {
         name,

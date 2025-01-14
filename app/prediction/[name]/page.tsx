@@ -15,11 +15,11 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 export default async function PredictionPage({
   params,
 }: {
-  params: { id: string };
+  params: { name: string };
 }) {
   const prediction = await prisma.prediction.findUnique({
     where: {
-      id: parseInt(params.id),
+      name: params.name,
     },
   });
 

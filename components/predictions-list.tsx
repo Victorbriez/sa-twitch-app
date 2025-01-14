@@ -18,7 +18,7 @@ export function PredictionsList({ predictions }: PredictionsListProps) {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {predictions.map((prediction) => (
-        <Link href={`/prediction/${prediction.id}`} key={prediction.id}>
+        <Link href={`/prediction/${prediction.name}`} key={prediction.name}>
           <Card className="transition-all duration-200 hover:border-primary/50 hover:shadow-md">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
               <CardTitle className="text-2xl font-bold">

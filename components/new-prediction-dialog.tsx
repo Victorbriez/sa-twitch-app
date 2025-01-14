@@ -39,7 +39,7 @@ export function NewPredictionDialog({ children }: NewPredictionDialogProps) {
           description: "Votre prédiction a été créée avec succès",
         });
         if (result.data) {
-          router.push(`/prediction/${result.data.id}`);
+          router.push(`/prediction/${result.data.name}`);
         }
         setOpen(false);
       } else {
@@ -48,6 +48,7 @@ export function NewPredictionDialog({ children }: NewPredictionDialogProps) {
           title: "Erreur lors de la création",
           description: result.error,
         });
+        setOpen(true);
       }
     });
   }
@@ -70,8 +71,6 @@ export function NewPredictionDialog({ children }: NewPredictionDialogProps) {
               name="name"
               placeholder="Nom de la prédiction"
               disabled={isPending}
-              required
-              minLength={3}
             />
           </div>
           <AlertDialogFooter>
