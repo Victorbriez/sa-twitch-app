@@ -1,8 +1,8 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, ChevronRight } from "lucide-react";
-import { UserNav } from "@/components/user-nav";
+import { Palette, Plus, ChevronRight } from "lucide-react";
+
 import { ModeToggle } from "@/components/mode-toggle";
 import {
   Collapsible,
@@ -25,8 +25,8 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { getPredictions } from "@/app/actions/predictions";
-import { TwitchCoin } from "@/components/icons/twitch-coin";
-import { Separator } from "@/components/ui/separator";
+import { NewPredictionDialog } from "@/components/new-prediction-dialog";
+import { UserNav } from "@/components/user-nav";
 
 export async function AppSidebar() {
   const predictions = await getPredictions();
@@ -38,13 +38,13 @@ export async function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/" className="flex items-center gap-3">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary/10">
                   <Image
                     src="/logo.png"
                     alt="Logo SA Twitch App"
                     width={32}
                     height={32}
-                    className="size-8"
+                    className="size-6"
                   />
                 </div>
                 <div className="grid gap-0.5">
@@ -57,8 +57,6 @@ export async function AppSidebar() {
         </SidebarMenu>
       </SidebarHeader>
 
-      <Separator />
-
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Overlays</SidebarGroupLabel>
@@ -67,7 +65,7 @@ export async function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Prédictions">
                   <Link href="/prediction" className="flex-1">
-                    <TwitchCoin />
+                    <Palette className="size-4" />
                     <span>Prédictions</span>
                   </Link>
                 </SidebarMenuButton>
@@ -99,12 +97,14 @@ export async function AppSidebar() {
                     ))
                   )}
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton asChild>
-                      <Link href="/prediction/new">
-                        <Plus className="size-4" />
-                        <span>Nouvelle Prédiction</span>
-                      </Link>
-                    </SidebarMenuSubButton>
+                    <NewPredictionDialog>
+                      <SidebarMenuSubButton asChild>
+                        <button>
+                          <Plus className="size-4" />
+                          <span>Nouvelle Prédiction</span>
+                        </button>
+                      </SidebarMenuSubButton>
+                    </NewPredictionDialog>
                   </SidebarMenuSubItem>
                 </SidebarMenuSub>
               </CollapsibleContent>
