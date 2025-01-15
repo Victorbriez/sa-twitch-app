@@ -89,7 +89,7 @@ export async function AppSidebar() {
                     predictions.map((prediction) => (
                       <SidebarMenuSubItem key={prediction.name}>
                         <SidebarMenuSubButton asChild>
-                          <Link href={`/prediction/${prediction.name}`}>
+                          <Link href={`/prediction/custom/${prediction.name}`}>
                             {prediction.name}
                           </Link>
                         </SidebarMenuSubButton>

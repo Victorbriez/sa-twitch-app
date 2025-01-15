@@ -61,7 +61,7 @@ export function PredictionsList({ predictions }: PredictionsListProps) {
         </div>
       )}
       {predictions.map((prediction) => {
-        const link = `http://localhost:3000/prediction/${prediction.name}/overlay`;
+        const link = `http://localhost:3000/prediction/overlay/${prediction.name}`;
 
         return (
           <Card
@@ -134,7 +134,7 @@ export function PredictionsList({ predictions }: PredictionsListProps) {
                   variant="default"
                   asChild
                 >
-                  <Link href={`/prediction/${prediction.name}`}>
+                  <Link href={`/prediction/custom/${prediction.name}`}>
                     <Settings className="mr-2 h-4 w-4" />
                     Customiser
                   </Link>
