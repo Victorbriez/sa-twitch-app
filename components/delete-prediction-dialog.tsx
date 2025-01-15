@@ -15,19 +15,19 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { deletePrediction } from "@/app/actions/predictions";
 
-interface DeletePredictionAlertProps {
+interface DeletePredictionDialogProps {
   predictionId: number;
   predictionName: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function DeletePredictionAlert({
+export function DeletePredictionDialog({
   predictionId,
   predictionName,
   isOpen,
   onOpenChange,
-}: DeletePredictionAlertProps) {
+}: DeletePredictionDialogProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
