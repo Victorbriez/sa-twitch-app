@@ -53,6 +53,7 @@ export default async function PredictionPage() {
               </Button>
             </NewPredictionDialog>
           </div>
+          <Separator className="mb-8" />
           <PredictionsList predictions={predictions} />
         </div>
       </main>

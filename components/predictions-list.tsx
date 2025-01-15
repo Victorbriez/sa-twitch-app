@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { type Prediction } from "@prisma/client";
-import { MoreHorizontal, Pencil, Trash2, Copy } from "lucide-react";
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Copy,
+  ExternalLink,
+  Settings,
+} from "lucide-react";
 
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -44,8 +52,16 @@ export function PredictionsList({ predictions }: PredictionsListProps) {
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {predictions.length === 0 && (
+        <div className="col-span-full text-center">
+          <h2 className="text-2xl font-bold mb-2">Aucune prédiction</h2>
+          <p className="text-muted-foreground">
+            Commencez par créer votre première prédiction !
+          </p>
+        </div>
+      )}
       {predictions.map((prediction) => {
-        const link = `http://localhost:3000/prediction/${prediction.name}`;
+        const link = `http://localhost:3000/prediction/${prediction.name}/overlay`;
 
         return (
           <Card
@@ -65,13 +81,19 @@ export function PredictionsList({ predictions }: PredictionsListProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
-                    onClick={() => setEditingPrediction(prediction)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setEditingPrediction(prediction);
+                    }}
                   >
                     <Pencil className="mr-2 h-4 w-4" />
                     <span>Modifier</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => setDeletingPrediction(prediction)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setDeletingPrediction(prediction);
+                    }}
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
                     <span>Supprimer</span>
@@ -83,17 +105,41 @@ export function PredictionsList({ predictions }: PredictionsListProps) {
               <CardDescription className="flex-1 mb-4 line-clamp-3 overflow-hidden text-ellipsis">
                 {prediction.description || "Aucune description disponible."}
               </CardDescription>
-              <Button
-                className="w-full opacity-0 group-hover:opacity-100 transition-opacity mt-auto"
-                variant="secondary"
-                onClick={(e) => {
-                  e.preventDefault();
-                  copyToClipboard(link);
-                }}
-              >
-                <Copy className="mr-2 h-4 w-4" />
-                Copier le lien
-              </Button>
+              <div className="flex flex-col gap-2 mt-auto">
+                <div className="flex gap-2">
+                  <Button
+                    className="flex-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    variant="secondary"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      copyToClipboard(link);
+                    }}
+                  >
+                    <Copy className="mr-2 h-4 w-4" />
+                    Copier le lien
+                  </Button>
+                  <Button
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    variant="outline"
+                    asChild
+                  >
+                    <Link href={link} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="h-4 w-4" />
+                      <span className="sr-only">Ouvrir l&apos;overlay</span>
+                    </Link>
+                  </Button>
+                </div>
+                <Button
+                  className="w-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  variant="default"
+                  asChild
+                >
+                  <Link href={`/prediction/${prediction.name}`}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    Customiser
+                  </Link>
+                </Button>
+              </div>
             </CardContent>
           </Card>
         );
