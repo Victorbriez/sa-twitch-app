@@ -1,9 +1,40 @@
-"use server";
-
-import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { NextAuthOptions } from "next-auth";
+import DiscordProvider from "next-auth/providers/discord";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { revalidatePath } from "next/cache";
+
+const authOptions: NextAuthOptions = {
+  providers: [
+    DiscordProvider({
+      clientId: process.env.DISCORD_CLIENT_ID as string,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
+    }),
+  ],
+  callbacks: {
+    session: async ({ session, user }) => {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+          role: user.role,
+        },
+      };
+    },
+  },
+  events: {
+    createUser: async (user) => {
+      await prisma.user.update({
+        where: { id: user.user.id },
+        data: { role: "member" },
+      });
+    },
+  },
+  adapter: PrismaAdapter(prisma),
+  secret: process.env.NEXTAUTH_SECRET,
+};
 
 export async function createPrediction(formData: FormData) {
   try {
