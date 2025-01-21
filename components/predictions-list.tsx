@@ -28,7 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EditPredictionDialog } from "@/components/edit-prediction-dialog";
-import { DeletePredictionAlert } from "@/components/delete-prediction-dialog";
+import { DeletePredictionDialog } from "@/components/delete-prediction-dialog";
 
 interface PredictionsListProps {
   predictions: Prediction[];
@@ -151,7 +151,7 @@ export function PredictionsList({ predictions }: PredictionsListProps) {
         />
       )}
       {deletingPrediction && (
-        <DeletePredictionAlert
+        <DeletePredictionDialog
           predictionId={deletingPrediction.id}
           predictionName={deletingPrediction.name}
           isOpen={!!deletingPrediction}

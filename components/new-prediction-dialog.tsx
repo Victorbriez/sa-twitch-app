@@ -75,7 +75,7 @@ export function NewPredictionDialog({ children }: NewPredictionDialogProps) {
         description: "Votre prédiction a été créée avec succès",
       });
       if (result.data) {
-        router.push(`/prediction/${result.data.name}`);
+        router.push(`/prediction/custom/${result.data.name}`);
       }
       setOpen(false);
       form.reset();
